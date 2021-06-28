@@ -1,5 +1,7 @@
-# Nanuk
+# nanuk
 
-A Neural Netwurk from scratch
+A **N**eur**a**l **N**etw**u**r**k**
 
-project to learn C++, various libraries, CMake, and Machine Learning from cratch
+project to learn C++, various libraries, CMake, and Machine Learning from scratch
+
+Ruby API is planned
