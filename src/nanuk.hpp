@@ -15,6 +15,7 @@ namespace nanuk {
     using Layer  = vector<Neuron>;   // dense-only layer
     
     Scalar (* activation_function)(Scalar) = &::tanh;
+    Scalar    cost_function(Tensor1D&, Tensor1D&);
 
 
     struct Synapse {
