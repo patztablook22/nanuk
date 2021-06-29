@@ -2,7 +2,16 @@
 using namespace nanuk;
 
 
-Nanuk::Nanuk(vector<unsigned>& topology) {
+Nanuk::Nanuk(const vector<unsigned>& topology) {
+    init_network(topology);
+}
+
+void Nanuk::init_network(const vector<unsigned>& topology) {
+    if (topology.size() < 2)
+        throw invalid_argument(
+            "there must be at least one layer other than the input layer"
+        );
+
     layers.reserve(topology.size());
     
     // 1 input value per input neuron
@@ -37,9 +46,8 @@ void Nanuk::feed_forward(Tensor1D& input) {
         Layer& hidden_layer = layers[i];
         Layer& prev_layer   = layers[i - 1];
         
-        for (Neuron& n: hidden_layer) {
+        for (Neuron& n: hidden_layer)
             n.feed_forward(prev_layer);
-        }
     }
 }
 

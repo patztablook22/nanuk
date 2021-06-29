@@ -4,6 +4,7 @@
 #include <fstream>
 #include <iostream>
 #include <algorithm>
+#include <sstream>
 #include <cmath>
 
 
@@ -36,6 +37,9 @@ namespace nanuk {
             void calculate_gradient(Scalar);
             void calculate_gradient(Layer&, unsigned);
             void apply_gradient(Scalar, Layer&);
+            void get_structure(Tensor1D&);
+            void set_structure(const Tensor1D&);
+            
     };
     
 
@@ -44,13 +48,16 @@ namespace nanuk {
         Scalar epsilon;
 
         public:
-            Nanuk(vector<unsigned>&);
-            Nanuk(ifstream);
+            Nanuk(const vector<unsigned>&);  // initialize manually
+            Nanuk(ifstream&);                // import from a file
+            void operator>>(ofstream&);      // export into a file
+            void inspect();
             void learn(Tensor2D&, Tensor2D&);
             Tensor1D operator()(Tensor1D&);
-            void inspect();
         
         private:
+            void init_network(const vector<unsigned>&);
+
             Tensor1D output();
             void feed_forward(Tensor1D&);
             void propagate_back(Tensor1D&);

@@ -3,7 +3,8 @@ using namespace nanuk;
 
 
 Neuron::Neuron(unsigned inputs)
-    :dendrites(inputs)
+    :dendrites(inputs, 0)
+    ,bias(0)
 {}
 
 Scalar Neuron::read() {
@@ -17,9 +18,8 @@ void Neuron::feed_forward(Scalar val) {
 void Neuron::feed_forward(Layer& prev_layer) {
     sum = bias;
     
-    for (int i = 0; i < dendrites.size(); i++) {
+    for (int i = 0; i < dendrites.size(); i++)
         sum += dendrites[i] * prev_layer[i].activation;
-    }
 
     activation = activation_function(sum);
 }
@@ -49,4 +49,17 @@ void Neuron::apply_gradient(Scalar epsilon, Layer& prev_layer) {
     
     // update bias
     bias -= epsilon * gradient; // * 1
+}
+
+void Neuron::get_structure(Tensor1D& t) {
+    t = dendrites;
+    t.push_back(bias);
+}
+
+void Neuron::set_structure(const Tensor1D& t) {
+    copy(
+        t.begin(), t.end() - 1,
+        dendrites.begin()
+    );
+    bias = t.back();
 }
