@@ -1,25 +1,52 @@
 #include "nanuk.hpp"
-
 using namespace nanuk;
 
+
 Neuron::Neuron(unsigned inputs)
-    :synapsesIn(inputs)
+    :dendrites(inputs)
 {}
 
+Scalar Neuron::read() {
+    return activation;
+}
+
 void Neuron::feed_forward(Scalar val) {
-    memory = val;
+    activation = val;
 }
 
 void Neuron::feed_forward(Layer& prev_layer) {
-    Scalar buff = bias;
+    sum = bias;
     
-    for (int i = 0; i < synapsesIn.size(); i++) {
-        buff += synapsesIn[i].weight * prev_layer[i].memory;
+    for (int i = 0; i < dendrites.size(); i++) {
+        sum += dendrites[i] * prev_layer[i].activation;
     }
-    
-    memory = activation_function(buff);
+
+    activation = activation_function(sum);
 }
 
-Scalar Neuron::read() {
-    return memory;
+void Neuron::calculate_gradient(Scalar label) {
+    gradient  = activation_function_derivative(sum);
+    gradient *= cost_function_derivative(
+        {activation}, {label}
+    );
+}
+
+void Neuron::calculate_gradient(Layer& next_layer, unsigned index) {
+    gradient  = 0;
+    // weighted chain to calculated cost_function_derivative above
+    for (unsigned i = 0; i < next_layer.size(); i++)
+        gradient += next_layer[i].gradient * next_layer[i].dendrites[i];
+    gradient *= activation_function_derivative(sum);
+}
+
+void Neuron::apply_gradient(Scalar epsilon, Layer& prev_layer) {
+    // update dendrites
+    for (unsigned i = 0; i < dendrites.size(); i++) {
+        Scalar d = dendrites[i];
+        Scalar a = prev_layer[i].activation;
+        d -= epsilon * gradient * a;
+    }
+    
+    // update bias
+    bias -= epsilon * gradient; // * 1
 }

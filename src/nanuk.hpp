@@ -2,7 +2,10 @@
 
 #include <vector>
 #include <fstream>
+#include <iostream>
+#include <algorithm>
 #include <cmath>
+
 
 namespace nanuk {
     
@@ -14,34 +17,36 @@ namespace nanuk {
     class Neuron;
     using Layer  = vector<Neuron>;   // dense-only layer
     
-    Scalar (* activation_function)(Scalar) = &::tanh;
-    Scalar    cost_function(Tensor1D&, Tensor1D&);
+    inline Scalar activation_function(const Scalar);
+    inline Scalar activation_function_derivative(const Scalar);
+    inline Scalar cost_function(const Tensor1D&, const Tensor1D&);
+    inline Scalar cost_function_derivative(const Tensor1D&, const Tensor1D&);
 
-
-    struct Synapse {
-        Scalar weight;
-    };
-    
 
     class Neuron {
+        vector<Scalar> dendrites;
         Scalar bias;
-        vector<Synapse> synapsesIn;
-        Scalar memory;
+        Scalar sum, activation, gradient;
 
         public:
             Neuron(unsigned);
+            Scalar read();
             void feed_forward(Scalar);
             void feed_forward(Layer&);
-            Scalar read();
+            void calculate_gradient(Scalar);
+            void calculate_gradient(Layer&, unsigned);
+            void apply_gradient(Scalar, Layer&);
     };
     
 
     class Nanuk {
         vector<Layer> layers;
+        Scalar epsilon;
 
         public:
             Nanuk(vector<unsigned>&);
-            void operator<<(Tensor2D&);
+            Nanuk(ifstream);
+            void learn(Tensor2D&, Tensor2D&);
             Tensor1D operator()(Tensor1D&);
             void inspect();
         
@@ -49,6 +54,7 @@ namespace nanuk {
             Tensor1D output();
             void feed_forward(Tensor1D&);
             void propagate_back(Tensor1D&);
-            
+            void epoch(Tensor2D&, Tensor2D&);
     };
+
 }

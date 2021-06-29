@@ -1,6 +1,4 @@
 #include "nanuk.hpp"
-#include <iostream>
-#include <algorithm>
 using namespace nanuk;
 
 
@@ -34,12 +32,12 @@ void Nanuk::feed_forward(Tensor1D& input) {
         input_layer[i].feed_forward(input[i]);
     }
     
-    // feed forward through inner neurons
+    // feed forward through hidden neurons
     for (unsigned i = 1; i < layers.size(); i++) {
-        Layer& inner_layer = layers[i];
-        Layer& prev_layer  = layers[i - 1];
+        Layer& hidden_layer = layers[i];
+        Layer& prev_layer   = layers[i - 1];
         
-        for (Neuron& n: inner_layer) {
+        for (Neuron& n: hidden_layer) {
             n.feed_forward(prev_layer);
         }
     }
@@ -51,7 +49,7 @@ Tensor1D Nanuk::output() {
 
     // collect output neuron memory into tensor
     transform(output_layer.begin(), output_layer.end(), buff.begin(),
-        [&](auto n) { return n.read(); }
+        [&](auto& n) { return n.read(); }
     );
     return buff;
 }
@@ -59,4 +57,39 @@ Tensor1D Nanuk::output() {
 Tensor1D Nanuk::operator()(Tensor1D& input) {
     feed_forward(input);
     return output();
+}
+
+void Nanuk::learn(Tensor2D& features, Tensor2D& labels) {
+    if (features.size() != labels.size())
+        throw invalid_argument("features and labels are not of equal size");
+    epoch(features, labels);
+}
+
+void Nanuk::epoch(Tensor2D& features, Tensor2D& labels) {
+    for (unsigned i = 0; i < features.size(); i++) {
+        feed_forward(features[i]);
+        propagate_back(labels[i]);
+    }
+}
+
+void Nanuk::propagate_back(Tensor1D& labels) {
+    {
+        Layer& output_layer = layers.back();
+        for (unsigned i = 0; i < output_layer.size(); i++)
+            output_layer[i].calculate_gradient(labels[i]);
+    }
+    
+    for (unsigned i = layers.size() - 2; i >= 0; i--) {
+        Layer& hidden_layer = layers[i];
+        Layer& next_layer   = layers[i + 1];
+        for (unsigned j = 0; j < hidden_layer.size(); j++)
+            hidden_layer[j].calculate_gradient(next_layer, j);
+    }
+    
+    for (unsigned i = 1; i < layers.size(); i++) {
+        Layer& layer = layers[i];
+        Layer& prev_layer = layers[i - 1];
+        for (Neuron& n: layer)
+            n.apply_gradient(epsilon, prev_layer);
+    }
 }
