@@ -53,6 +53,7 @@ namespace nanuk {
             void operator>>(ofstream&);      // export into a file
             void inspect();
             void learn(Tensor2D&, Tensor2D&);
+            void learn(ifstream&, unsigned);
             Tensor1D operator()(Tensor1D&);
         
         private:

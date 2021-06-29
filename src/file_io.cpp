@@ -78,3 +78,61 @@ void Nanuk::operator>>(ofstream& os) {
         }
     }
 }
+
+
+void Nanuk::learn(ifstream& csv, unsigned header_lines = 1) {
+    string buff;
+    
+    // features first, labels second
+    Tensor2D features, labels;
+    vector<Tensor2D*> datasets{ &features, &labels };
+    
+    // ignore header lines
+    for (unsigned i = 0; i < header_lines; i++)
+        getline(csv, buff);
+    
+
+    // parse data lines
+    while (csv) {
+        getline(csv, buff);
+
+        // skip empty lines
+        if (buff.empty()) continue;
+
+        stringstream line(buff);
+        Scalar val;
+        
+        // add record to features and labels tensors
+        
+        features.push_back(
+            Tensor1D(layers.front().size())
+        );
+
+        labels.push_back(
+            Tensor1D(layers.back().size())
+        );
+        
+        // read values into datasets
+        for (Tensor2D* dataset: datasets) {
+            for (Scalar& data: dataset->back()) {
+                getline(line, buff, ',');
+                stringstream val(buff);
+                val >> data;
+            }
+        }
+    }
+
+    /*
+    // printing parsed values for debug
+    for (unsigned i = 0; i < features.size(); i++) {
+        for (Tensor2D* dataset: datasets) {
+            Tensor1D row = (*dataset)[i];
+            for (Scalar data: row)
+                cout << data << '\t';
+        }
+        cout << '\n';
+    }
+    */
+    
+    learn(features, labels);
+}

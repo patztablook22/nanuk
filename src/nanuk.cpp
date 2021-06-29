@@ -87,7 +87,7 @@ void Nanuk::propagate_back(Tensor1D& labels) {
             output_layer[i].calculate_gradient(labels[i]);
     }
     
-    for (unsigned i = layers.size() - 2; i >= 0; i--) {
+    for (int i = layers.size() - 2; i >= 0; i--) {
         Layer& hidden_layer = layers[i];
         Layer& next_layer   = layers[i + 1];
         for (unsigned j = 0; j < hidden_layer.size(); j++)
