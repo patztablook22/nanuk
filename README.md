@@ -4,7 +4,7 @@ C++ **N**eur**a**l **N**etw**u**r**k**
 
 Machine Learning from scratch.
 
-`nanuk-ruby` API and `nanuk-on-rails` integration planned
+_NOTE: `nanuk-ruby` API and `nanuk-on-rails` integration planned_
 
 # C++ demo
 
@@ -22,7 +22,7 @@ std::ifstream data("data.csv");
 n.learn(data);
 
 // apply model
-Tensor1D output = n({ /* input vector */});
+Tensor1D output = n({ /* input vector */ });
 std::cout << output[0] << std::endl;
 ```
 
@@ -31,4 +31,4 @@ std::cout << output[0] << std::endl;
 - `CMake`
 
 # Setup
-run `./setup.sh` to generate `libnanuk.so` shared object and `example` binary
+run `./setup.sh` to generate `libnanuk.so` shared object and `example` executable
