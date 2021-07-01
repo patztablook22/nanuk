@@ -30,7 +30,6 @@ Nanuk::Nanuk(ifstream& is) {
         
         getline(is, buff); // empty line
         getline(is, buff); // "layer i:"
-        cout << "|" << buff << "|" << endl;
         
         if (i == 0) continue; // no data for input layer required
         
@@ -42,28 +41,25 @@ Nanuk::Nanuk(ifstream& is) {
             stringstream line(buff);
             for (Scalar& param: structure)
                 line >> param;
-            for (Scalar param: structure)
-                cout << param << " ";
-            cout << endl;
             hidden_neuron.set_structure(structure);
         }        
     }
 }
 
 
-void Nanuk::operator>>(ofstream& os) {
+void Nanuk::operator>>(ofstream& os) const {
     // header
     os << "nanuk model" << '\n';
 
     // save topology
     os << "topology";
-    for (Layer& layer: layers)
+    for (auto& layer: layers)
         os << ' ' << layer.size();
     os << '\n';
     
     // save layers
     for (unsigned i = 0; i < layers.size(); i++) {
-        Layer& layer = layers[i];
+        auto layer = layers[i];
         os << "\n";
         os << "layer " << i << ":\n";
         if (i == 0) continue;
@@ -80,7 +76,7 @@ void Nanuk::operator>>(ofstream& os) {
 }
 
 
-void Nanuk::learn(ifstream& csv, unsigned header_lines = 1) {
+void Nanuk::learn(ifstream& csv, unsigned header_lines) {
     string buff;
     
     // features first, labels second
