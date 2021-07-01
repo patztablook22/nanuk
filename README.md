@@ -1,10 +1,10 @@
 # nanuk
 
-A **N**eur**a**l **N**etw**u**r**k**
+C++ **N**eur**a**l **N**etw**u**r**k**
 
-project to learn C++, various libraries, CMake, and Machine Learning from scratch
+Machine Learning from scratch.
 
-Ruby API is planned
+`nanuk-ruby` API and `nanuk-on-rails` integration planned
 
 # C++ demo
 
@@ -25,3 +25,10 @@ n.learn(data);
 Tensor1D output = n({ /* input vector */});
 std::cout << output[0] << std::endl;
 ```
+
+# Dependencies
+- `C++14`
+- `CMake`
+
+# Setup
+run `./setup.sh` to generate `libnanuk.so` shared object and `example` binary
