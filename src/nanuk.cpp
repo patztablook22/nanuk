@@ -25,7 +25,7 @@ void Nanuk::init_network(const vector<unsigned>& topology) {
     }
 }
 
-void Nanuk::inspect() {
+void Nanuk::inspect() const {
     for (int i = 0; i < layers.size(); i++) {
         cout << "layer " << i;
         cout << ": " << layers[i].size() << " neuron/s";
@@ -34,7 +34,7 @@ void Nanuk::inspect() {
     cout << flush;
 }
 
-void Nanuk::feed_forward(Tensor1D& input) {
+void Nanuk::feed_forward(const Tensor1D& input) {
     // feed input tensor to input neurons
     Layer& input_layer = layers[0];
     for (unsigned i = 0; i < input.size(); i++) {
@@ -51,8 +51,8 @@ void Nanuk::feed_forward(Tensor1D& input) {
     }
 }
 
-Tensor1D Nanuk::output() {
-    Layer& output_layer = layers.back();
+Tensor1D Nanuk::output() const {
+    const Layer& output_layer = layers.back();
     Tensor1D buff(output_layer.size());
 
     // collect output neuron memory into tensor
@@ -62,22 +62,41 @@ Tensor1D Nanuk::output() {
     return buff;
 }
 
-Tensor1D Nanuk::operator()(Tensor1D& input) {
+Tensor1D Nanuk::operator()(const Tensor1D& input) {
+    if (input.size() != layers.front().size())
+        throw("wrong number of features");
     feed_forward(input);
     return output();
+}
+
+void Nanuk::learning_params(size_t epochs, Scalar epsilon) {
+    this->epochs  = epochs;
+    this->epsilon = epsilon;   
 }
 
 void Nanuk::learn(Tensor2D& features, Tensor2D& labels) {
     if (features.size() != labels.size())
         throw invalid_argument("features and labels are not of equal size");
-    epoch(features, labels);
+
+    unsigned decile = epochs / 10;
+    if (decile == 0) decile = 1;
+
+    for (unsigned i = 0; i < epochs; i++) {
+        Scalar cost = epoch(features, labels);
+        if (i % decile == 0) {
+            cout << "epoch " << i << "\t ";
+            cout << "cost: " << cost << endl;
+        }
+    }
 }
 
-void Nanuk::epoch(Tensor2D& features, Tensor2D& labels) {
+Scalar Nanuk::epoch(Tensor2D& features, Tensor2D& labels) {
     for (unsigned i = 0; i < features.size(); i++) {
         feed_forward(features[i]);
         propagate_back(labels[i]);
     }
+
+    return cost_function(output(), labels.back());
 }
 
 void Nanuk::propagate_back(Tensor1D& labels) {

@@ -2,16 +2,19 @@
 using namespace nanuk;
 
 
-inline Scalar nanuk::activation_function(const Scalar x) {
+Scalar nanuk::activation_function(const Scalar x) {
     return ::tanh(x);
 }
 
-inline Scalar nanuk::activation_function_derivative(const Scalar x) {
+Scalar nanuk::activation_function_derivative(const Scalar x) {
     // tanh derivative approximation
-    return 1 - x*x;
+    // return 1 - x*x;
+    // tanh derivative = sech^2(x) = 1/cosh^2(x)
+    Scalar tmp = ::cosh(x);
+    return 1 / (tmp * tmp);
 }
 
-inline Scalar nanuk::cost_function(const Tensor1D& t1, const Tensor1D& t2) {    
+Scalar nanuk::cost_function(const Tensor1D& t1, const Tensor1D& t2) {    
     /*
      *  sum( (t1-t2)^2 )/n
      */
@@ -26,7 +29,7 @@ inline Scalar nanuk::cost_function(const Tensor1D& t1, const Tensor1D& t2) {
     return buff;
 }
 
-inline Scalar nanuk::cost_function_derivative(const Tensor1D& t1, const Tensor1D& t2) {
+Scalar nanuk::cost_function_derivative(const Tensor1D& t1, const Tensor1D& t2) {
     /*
      *  sum( -2 * (t1-t2) )/n
      */

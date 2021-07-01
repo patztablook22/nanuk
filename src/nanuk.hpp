@@ -18,10 +18,10 @@ namespace nanuk {
     class Neuron;
     using Layer  = vector<Neuron>;   // dense-only layer
     
-    inline Scalar activation_function(const Scalar);
-    inline Scalar activation_function_derivative(const Scalar);
-    inline Scalar cost_function(const Tensor1D&, const Tensor1D&);
-    inline Scalar cost_function_derivative(const Tensor1D&, const Tensor1D&);
+    Scalar activation_function(const Scalar);
+    Scalar activation_function_derivative(const Scalar);
+    Scalar cost_function(const Tensor1D&, const Tensor1D&);
+    Scalar cost_function_derivative(const Tensor1D&, const Tensor1D&);
 
 
     class Neuron {
@@ -31,13 +31,13 @@ namespace nanuk {
 
         public:
             Neuron(unsigned);
-            Scalar read();
+            Scalar read() const;
             void feed_forward(Scalar);
             void feed_forward(Layer&);
             void calculate_gradient(Scalar);
             void calculate_gradient(Layer&, unsigned);
             void apply_gradient(Scalar, Layer&);
-            void get_structure(Tensor1D&);
+            void get_structure(Tensor1D&) const;
             void set_structure(const Tensor1D&);
             
     };
@@ -45,24 +45,26 @@ namespace nanuk {
 
     class Nanuk {
         vector<Layer> layers;
+        size_t epochs;
         Scalar epsilon;
 
         public:
-            Nanuk(const vector<unsigned>&);  // initialize manually
-            Nanuk(ifstream&);                // import from a file
-            void operator>>(ofstream&);      // export into a file
-            void inspect();
+            Nanuk(const vector<unsigned>&);   // initialize manually
+            Nanuk(ifstream&);                 // import from a file
+            void operator>>(ofstream&) const; // export into a file
+            void inspect() const;
+            void learning_params(size_t, Scalar);
             void learn(Tensor2D&, Tensor2D&);
-            void learn(ifstream&, unsigned);
-            Tensor1D operator()(Tensor1D&);
+            void learn(ifstream&, unsigned = 1);
+            Tensor1D operator()(const Tensor1D&);
         
         private:
             void init_network(const vector<unsigned>&);
 
-            Tensor1D output();
-            void feed_forward(Tensor1D&);
+            Tensor1D output() const;
+            void feed_forward(const Tensor1D&);
             void propagate_back(Tensor1D&);
-            void epoch(Tensor2D&, Tensor2D&);
+            Scalar epoch(Tensor2D&, Tensor2D&);
     };
 
 }
