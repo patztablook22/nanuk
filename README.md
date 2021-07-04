@@ -1,6 +1,6 @@
 # Nanuk
 
-C++ **N**eur**a**l **N**etw**u**r**k**
+**N**eur**a**l **N**etw**u**r**k**
 
 Machine Learning API written in C++, from scratch.
 
@@ -26,9 +26,11 @@ Tensor1D output = n({ /* input vector */ });
 std::cout << output[0] << std::endl;
 ```
 
-# Dependencies
+## Dependencies
+
 - `C++14`
 - `CMake`
 
-# Setup
-run `./setup.sh` to generate `libnanuk.so` shared object and `example` executable
+## Setup
+
+Run `./setup.sh` to generate `libnanuk.so` shared object and `example` executable.
