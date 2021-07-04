@@ -1,12 +1,10 @@
-# nanuk
+# Nanuk
 
 C++ **N**eur**a**l **N**etw**u**r**k**
 
-Machine Learning from scratch.
+Machine Learning API written in C++, from scratch.
 
-_NOTE: `nanuk-ruby` API and `nanuk-on-rails` integration planned_
-
-# C++ demo
+## Demo
 
 ```C++
 using namespace nanuk;
@@ -19,7 +17,9 @@ n.learing_params(
 
 // train model
 std::ifstream data("data.csv");
-n.learn(data);
+n.learn(data, [](unsigned epoch, Scalar cost) {
+    std::cout << "Epoch " << epoch << ": " << cost << std::endl;
+});
 
 // apply model
 Tensor1D output = n({ /* input vector */ });
