@@ -76,7 +76,7 @@ void Nanuk::operator>>(ofstream& os) const {
 }
 
 
-void Nanuk::learn(ifstream& csv, unsigned header_lines) {
+void Nanuk::learn(ifstream& csv, Callback callback, unsigned header_lines) {
     string buff;
     
     // features first, labels second
@@ -130,5 +130,5 @@ void Nanuk::learn(ifstream& csv, unsigned header_lines) {
     }
     */
     
-    learn(features, labels);
+    learn(features, labels, callback);
 }

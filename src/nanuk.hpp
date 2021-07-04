@@ -14,6 +14,7 @@ namespace nanuk {
     using Scalar = double;
     using Tensor1D = vector<Scalar>;
     using Tensor2D = vector<Tensor1D>;
+    using Callback = void (*)(unsigned, Scalar);
     
     class Neuron;
     using Layer  = vector<Neuron>;   // dense-only layer
@@ -53,9 +54,10 @@ namespace nanuk {
             Nanuk(ifstream&);                 // import from a file
             void operator>>(ofstream&) const; // export into a file
             void inspect() const;
+            const vector<unsigned> topology() const;
             void learning_params(size_t, Scalar);
-            void learn(Tensor2D&, Tensor2D&);
-            void learn(ifstream&, unsigned = 1);
+            void learn(Tensor2D&, Tensor2D&, Callback = NULL);
+            void learn(ifstream&, Callback = NULL, unsigned = 1);
             Tensor1D operator()(const Tensor1D&);
         
         private:

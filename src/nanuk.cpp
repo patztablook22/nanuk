@@ -34,6 +34,14 @@ void Nanuk::inspect() const {
     cout << flush;
 }
 
+const vector<unsigned> Nanuk::topology() const {
+    // return model's topology
+    vector<unsigned> buff(layers.size());
+    for (unsigned i = 0; i < buff.size(); i++)
+        buff[i] = layers[i].size();
+    return buff;
+}
+
 void Nanuk::feed_forward(const Tensor1D& input) {
     // feed input tensor to input neurons
     Layer& input_layer = layers[0];
@@ -70,23 +78,18 @@ Tensor1D Nanuk::operator()(const Tensor1D& input) {
 }
 
 void Nanuk::learning_params(size_t epochs, Scalar epsilon) {
-    this->epochs  = epochs;
-    this->epsilon = epsilon;   
+    this->epochs   = epochs;
+    this->epsilon  = epsilon;   
 }
 
-void Nanuk::learn(Tensor2D& features, Tensor2D& labels) {
+void Nanuk::learn(Tensor2D& features, Tensor2D& labels, Callback callback) {
     if (features.size() != labels.size())
         throw invalid_argument("features and labels are not of equal size");
 
-    unsigned decile = epochs / 10;
-    if (decile == 0) decile = 1;
-
     for (unsigned i = 0; i < epochs; i++) {
         Scalar cost = epoch(features, labels);
-        if (i % decile == 0) {
-            cout << "epoch " << i << "\t ";
-            cout << "cost: " << cost << endl;
-        }
+        if (callback != NULL)
+            callback(i, cost);
     }
 }
 
