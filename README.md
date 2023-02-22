@@ -2,7 +2,7 @@
 
 **N**eur**a**l **N**etw**u**r**k**
 
-Machine Learning API written in C++, from scratch.
+Shallo neural network lib written in C++, from scratch.
 
 ## Demo
 
