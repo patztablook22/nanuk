@@ -2,7 +2,7 @@
 
 **N**eur**a**l **N**etw**u**r**k**
 
-Shallo neural network lib written in C++, from scratch.
+Shallow neural network lib written in C++, from scratch.
 
 ## Demo
 
